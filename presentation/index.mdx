@@ -1,72 +1,293 @@
-import {Cite} from 'spectacle';
-import {DarkSlide, CodeSlide} from './slides';
-import RegularComponent from './regular-component';
-
-# Spectacle MDX!
-
-**open the presentation/index.mdx file to get started**
-
----
-export default DarkSlide
-
-export const transition = ['zoom']
-
-# Write your Spectacle Presentations in Markdown
-## And seamlessly use React Components  
-**How sweet is that**  
-**(super sweet)**
-
----
-
-![datboi](https://pbs.twimg.com/media/CkjFUyTXEAEysBY.jpg)
+# The Several Ways to Construct an Object
 
 
 ---
 
-<RegularComponent/>
+## **A Warning:** 
+### There is going to be a lot of code, but it's going to be similar code
 
 ---
 
-###### Typography
-
-# Heading 1
-
-## Heading 2
-
-### Heading 3
-
-#### Heading 4
-
-##### Heading 5
-
-###### Heading 6
-
-Standard Text
+# The Several Ways
 
 ---
 
-###### Standard List
-
-- Item 1
-- Item 2
-- Item 3
-- Item 4
-
----
-
-> Example Quote
-
-<Cite>Author</Cite>
-
----
-export default CodeSlide
+## _The Literal_
 
 ```javascript
-class SuperCoolComponent extends React.Component {
-  render() {
-    return (
-      <p>code slide works in markdown too whaaaaat</p>
-    );
-  }
+const colourShape = {
+    colour: "red",
+    shape: "circle",
+    toString: function() {
+        return `I'm a ${this.colour} ${this.shape}`
+    }
+}
+
+console.log(colourShape.toString())
+```
+
+---
+
+
+## _The Constructor and Prototype_
+
+```javascript
+const ColourShape = function(colour, shape) {
+    this.colour = colour
+    this.shape = shape
+}
+
+ColourShape.prototype.toString = function() {
+    return `I'm a ${this.colour} ${this.shape}`
+}
+
+const colourShape = new ColourShape('red', 'circle')
+
+console.log(colourShape.toString())
+```
+
+---
+
+## _The Constructor OR Factory and Prototype_
+
+```javascript
+const ColourShape = function(colour, shape) {
+    if (!(this instanceof ColourShape)) {
+        return new ColourShape(colour, shape)
+    }
+    this.colour = colour
+    this.shape = shape
+}
+
+ColourShape.prototype.toString = function() {
+    return `I'm a ${this.colour} ${this.shape}`
+}
+
+const colourShape = ColourShape('red', 'circle')
+
+console.log(colourShape.toString())
+```
+
+---
+
+## _The Constructor sans Prototype_
+
+```javascript
+const ColourShape = function(colour, shape) {
+    this.colour = colour
+    this.shape = shape
+    this.toString = function() {
+        return `I'm a ${this.colour} ${this.shape}`
+    }
+}
+
+const colourShape = new ColourShape('red', 'circle')
+
+console.log(colourShape.toString())
+```
+
+---
+
+Javascript Has Several Ways to Make an Object
+_The JSON.parse() and merge_
+
+```javascript
+const colourShape = Object.assign(
+    {},
+    JSON.parse('{"colour": "red", "shape": "circle"}'),
+    {toString: function() {return `I'm a ${this.colour} ${this.shape}`}}
+)
+
+console.log(colourShape.toString())
+```
+
+---
+
+Javascript Has Several Ways to Make an Object
+_The Object Constructor and Clobber_
+
+```javascript
+const colourShape = new Object()
+
+colourShape.colour = 'red'
+colourShape.shape = 'circle'
+colourShape.toString = function() {
+    return `I'm a ${this.colour} ${this.shape}`
+}
+
+console.log(colourShape.toString())
+```
+
+---
+
+Javascript Has Several Ways to Make an Object
+_The `Object.create()`_
+
+```javascript
+
+const colourShape = Object.create(null)
+
+colourShape['colour'] = 'red'
+colourShape['shape'] = 'circle'
+colourShape['toString'] = function() {
+    return `I'm a ${this.colour} ${this.shape}`
+}
+
+console.log(colourShape.toString())
+```
+
+---
+
+Javascript Has Several Ways to Make an Object
+_The Factory and Closure_
+
+```javascript
+
+const colourShapeFactory = (colour, shape) => {
+    return {toString: () => `I'm a ${colour} ${shape}`}
+}
+
+const colourShape = colourShapeFactory('red', 'circle')
+console.log(colourShape.toString())
+```
+
+---
+Javascript Has Several Ways to Make an Object
+_The ES6 Class_
+
+```javascript
+class ColourShape {
+    constructor(colour, shape) {
+        this.colour = colour
+        this.shape = shape
+    }
+    toString() {
+        return `I'm a ${this.colour} ${this.shape}`
+    }
+}
+
+const colourShape = new ColourShape('red', 'circle')
+console.log(colourShape.toString())
+```
+
+---
+Javascript Has Several Ways to Make an Object
+_The ES6 Class Factory_
+
+```javascript
+const classFactory = (properties, toString) => {
+    return class {
+        constructor(...args) {
+            properties.map((p, i) => this[p] = args[i])
+        }
+        toString() {
+            return toString.apply(this)
+        }
+    }
+}
+
+const ColourShape = classFactory(
+    ['colour', 'shape'],
+    function() {
+        return `I'm a ${this.colour} ${this.shape}`
+});
+
+const colourShape = new ColourShape('red', 'circle')
+console.log(colourShape.toString())
+```
+
+---
+
+Javascript Has Several Ways to Make an Object
+_The Enterprise Calibre Builder - 1_
+
+```javascript
+class ColourShape {
+    constructor(colour, shape) {
+        this.colour = colour
+        this.shape = shape
+    }
+    toString() {
+        return `I'm a ${this.colour} ${this.shape}`
+    }
 }
 ```
+
+---
+
+Javascript Has Several Ways to Make an Object
+_The Enterprise Calibre Builder - 2_
+
+```javascript
+class ColourShapeBuilder {
+    constructor() {}
+    setColour(colour) {
+        this.colour = colour
+        return this;
+    }
+    setShape(shape) {
+        this.shape = shape
+        return this;
+    }
+    build() {
+        if(!this.colour) { 
+            throw new Error('Colour not set')
+        }
+        if(!this.shape) {
+            throw new Error('Shape not set')
+        }
+        return new ColourShape(this.colour, this.shape)
+    }
+}
+
+const colourShape = (new ColourShapeBuilder()).setColour('red').setShape('circle').build()
+
+console.log(colourShape.toString())
+```
+
+---
+
+# So that's 11 ways to do a fundamentally similar but subtly different version of the same thing
+
+---
+
+## But, we were just making a function with a single method...
+
+---
+Why not skip the object?
+_The Function Factory_
+
+```javascript
+const ColourShape = (colour, shape) => () => `I'm a ${colour} ${shape}`
+
+const colourShape = ColourShape('red', 'circle')
+
+console.log(colourShape())
+```
+
+---
+
+Or
+_`Function.bind()`_
+
+```javascript
+const colourShapeStringMaker = (colour, shape) => `I'm a ${colour} ${shape}`
+
+const colourShape = colourShapeStringMaker.bind(null, 'red', 'circle')
+
+console.log(colourShape())
+```
+
+---
+
+# Takeaways
+
+---
+
+## Javascript Has Several Ways to Make an Object
+
+---
+
+## There's an interesting parallel between creating objects, closures, and binding parameters to functions before they are called
+
+---

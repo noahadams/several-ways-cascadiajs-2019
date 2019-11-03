@@ -1,15 +1,18 @@
 import createTheme from "../../createTheme";
 
 const colors = {
-  primary: "white",
-  secondary: "#1F2022", // almost black w/ blueish tint
-  tertiary: "#fc300f", // bright red
-  quaternary: "#CECECE" // pale gray
+  // https://www.canva.com/design/DADfDZHKm5E/remix?action2=create&mediaId=DADfDZHKm5E&signupReferrer=blog&utm_source=blog&utm_medium=content&utm_campaign=100-color-combinations&%24desktop_url=https%3A%2F%2Fwww.canva.com%2Fdesign%2FDADfDZHKm5E%2Fremix&uid=edd76747-b3d9-4e6f-a62c-494634007887&_branch_match_id=719432298129156966
+  primary: "#505160", // "Thunder Cloud"
+  secondary: "#ffffff", // white
+  tertiary: "#AEBD38", // Moss
+  quaternary: "#598234" // Meadow
 };
 
 const theme = createTheme(colors, {
-    primary: "Montserrat",
-    secondary: "Helvetica"
+    primary: "Georgia",
+    secondary: "Helvetica",
+    tertiary: "Monaco",
+    quaternary: "Cinzel Decorative"
   }, {
     progress: {
       pacmanTop: {
@@ -25,12 +28,12 @@ const theme = createTheme(colors, {
     components: {
       heading: {
         h1: {
-          fontSize: '4rem',
+          fontSize: '8rem',
           textTransform: 'uppercase'
         },
         h2: {
           fontSize: '3.5rem',
-          textTransform: 'uppercase'
+          //textTransform: 'uppercase'
         },
         h3: {
           fontSize: '3rem',
@@ -50,7 +53,7 @@ const theme = createTheme(colors, {
         }
       },
       codePane: {
-        fontSize: '2rem'
+        fontSize: '1.5rem'
       }
     }
   });
