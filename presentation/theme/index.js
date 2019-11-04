@@ -11,7 +11,7 @@ const colors = {
 const fonts = {
   primary: "Nunito Sans",
   secondary: "Georgia",
-  tertiary: "Monaco",
+  tertiary: "Monaco, Monospace",
   quaternary: "Cinzel Decorative"
 }
 
@@ -32,7 +32,6 @@ const theme = createTheme(colors, fonts, {
         h1: {
           fontSize: '8rem',
           fontFamily: fonts.quaternary 
-
         },
         h2: {
           fontSize: '5rem',
@@ -53,7 +52,7 @@ const theme = createTheme(colors, fonts, {
         }
       },
       codePane: {
-        fontSize: '1.25rem'
+        fontSize: '1rem'
       },
       link: {
         color: "#AEBD38" // Moss
