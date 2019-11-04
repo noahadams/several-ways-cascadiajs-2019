@@ -49,7 +49,7 @@ module.exports = async function (src) {
       transitions.push(transition);
 
       return lines.filter(str => !TRANSREG.test(str))
-        .filter(Boolean)
+        //.filter(Boolean)
         .join('\n')
     })
     .map(str => {
@@ -58,7 +58,7 @@ module.exports = async function (src) {
         ...lines.filter(str => MODREG.test(str))
       );
       return lines.filter(str => !MODREG.test(str))
-        .filter(Boolean)
+        //.filter(Boolean)
         .join('\n')
     })
 
