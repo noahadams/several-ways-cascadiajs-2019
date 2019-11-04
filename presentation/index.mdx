@@ -3,246 +3,315 @@
 
 ---
 
-## **A Warning:** 
-### There is going to be a lot of code, but it's going to be similar code
+## Who am I?
 
 ---
 
-# The Several Ways
+## Noah Adams
+## [@noah_adams](https://twitter.com/noah_adams)
 
 ---
 
-## _The Literal_
+# ⚡️
+
+---
+
+## An incomplete taxonomy of ways to make new objects in JavaScript
+
+---
+
+## *A Warning:*
+
+---
+
+## There is going to be a lot of code...
+
+---
+
+## but it's going to be very similar code
+
+---
+
+## It will range from perfectly fine... 
+
+---
+
+## to _quite unreasonable._
+
+---
+
+# _The Several Ways_
+
+---
+
+### _The Literal_
 
 ```javascript
-const colourShape = {
-    colour: "red",
-    shape: "circle",
-    toString: function() {
-        return `I'm a ${this.colour} ${this.shape}`
+const client = {
+  token: "",
+  baseURL: "https://api.github.com/",
+  repo: function(owner, name) {
+    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+      res => res.json()
+    );
+  }
+};
+
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
+```
+
+---
+
+
+### _The Constructor and Prototype_
+
+```javascript
+const Client = function(baseURL = "https://api.github.com/", token = "") {
+  [this.baseURL, this.token] = [baseURL, token];
+};
+
+Client.prototype.repo = function(owner, name) {
+  const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+  return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+};
+
+const client = new Client();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
+```
+
+---
+
+### _The Constructor OR Factory and Prototype_
+
+```javascript
+const Client = function(baseURL = "https://api.github.com/", token = "") {
+  if (!(this instanceof Client)) {
+    return new Client(baseURL, token);
+  }
+  [this.baseURL, this.token] = [baseURL, token];
+};
+
+Client.prototype.repo = function(owner, name) {
+  const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+  return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+};
+
+alert(JSON.stringify(await Client().repo("tc39", "proposals")));
+```
+
+---
+
+### _The Constructor sans Prototype_
+
+```javascript
+const Client = function(baseURL = "https://api.github.com/", token = "") {
+  [this.baseURL, this.token] = [baseURL, token];
+  this.repo = function(owner, name) {
+    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+      res => res.json()
+    );
+  };
+};
+
+const client = new Client();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
+```
+
+---
+
+### _The `JSON.parse()` and merge_
+
+```javascript
+const Client = Object.assign(
+  {},
+  JSON.parse(
+    '"baseURL":"https://api.github.com/", "token": "arealgithubtoken"}'
+  ),
+  {
+    repo: function(owner, name) {
+      const headers = this.token
+        ? { Authorization: "token ${this.token}" }
+        : {};
+      return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+        res => res.json()
+      );
     }
-}
+  }
+);
 
-console.log(colourShape.toString())
+const client = new Client();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
 ---
 
 
-## _The Constructor and Prototype_
+### _The `Object` Constructor and Clobber_
 
 ```javascript
-const ColourShape = function(colour, shape) {
-    this.colour = colour
-    this.shape = shape
-}
+const client = new Object();
+client.baseURL = "https://api.github.com/";
+client.token = "";
+client.repo = function(owner, name) {
+  const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+  return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+};
 
-ColourShape.prototype.toString = function() {
-    return `I'm a ${this.colour} ${this.shape}`
-}
-
-const colourShape = new ColourShape('red', 'circle')
-
-console.log(colourShape.toString())
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
 ---
 
-## _The Constructor OR Factory and Prototype_
+
+### _The `Object.create()`_
 
 ```javascript
-const ColourShape = function(colour, shape) {
-    if (!(this instanceof ColourShape)) {
-        return new ColourShape(colour, shape)
-    }
-    this.colour = colour
-    this.shape = shape
-}
+const client = Object.create(null);
 
-ColourShape.prototype.toString = function() {
-    return `I'm a ${this.colour} ${this.shape}`
-}
+client["baseURL"] = "https://api.github.com/";
+client["token"] = "";
+client["repo"] = function(owner, name) {
+  const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+  return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+};
 
-const colourShape = ColourShape('red', 'circle')
-
-console.log(colourShape.toString())
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
 ---
 
-## _The Constructor sans Prototype_
+
+### _The Factory and Closure_
 
 ```javascript
-const ColourShape = function(colour, shape) {
-    this.colour = colour
-    this.shape = shape
-    this.toString = function() {
-        return `I'm a ${this.colour} ${this.shape}`
-    }
-}
-
-const colourShape = new ColourShape('red', 'circle')
-
-console.log(colourShape.toString())
-```
-
----
-
-Javascript Has Several Ways to Make an Object
-_The JSON.parse() and merge_
-
-```javascript
-const colourShape = Object.assign(
-    {},
-    JSON.parse('{"colour": "red", "shape": "circle"}'),
-    {toString: function() {return `I'm a ${this.colour} ${this.shape}`}}
-)
-
-console.log(colourShape.toString())
-```
-
----
-
-Javascript Has Several Ways to Make an Object
-_The Object Constructor and Clobber_
-
-```javascript
-const colourShape = new Object()
-
-colourShape.colour = 'red'
-colourShape.shape = 'circle'
-colourShape.toString = function() {
-    return `I'm a ${this.colour} ${this.shape}`
-}
-
-console.log(colourShape.toString())
-```
-
----
-
-Javascript Has Several Ways to Make an Object
-_The `Object.create()`_
-
-```javascript
-
-const colourShape = Object.create(null)
-
-colourShape['colour'] = 'red'
-colourShape['shape'] = 'circle'
-colourShape['toString'] = function() {
-    return `I'm a ${this.colour} ${this.shape}`
-}
-
-console.log(colourShape.toString())
-```
-
----
-
-Javascript Has Several Ways to Make an Object
-_The Factory and Closure_
-
-```javascript
-
-const colourShapeFactory = (colour, shape) => {
-    return {toString: () => `I'm a ${colour} ${shape}`}
-}
-
-const colourShape = colourShapeFactory('red', 'circle')
-console.log(colourShape.toString())
-```
-
----
-Javascript Has Several Ways to Make an Object
-_The ES6 Class_
-
-```javascript
-class ColourShape {
-    constructor(colour, shape) {
-        this.colour = colour
-        this.shape = shape
-    }
-    toString() {
-        return `I'm a ${this.colour} ${this.shape}`
-    }
-}
-
-const colourShape = new ColourShape('red', 'circle')
-console.log(colourShape.toString())
-```
-
----
-Javascript Has Several Ways to Make an Object
-_The ES6 Class Factory_
-
-```javascript
-const classFactory = (properties, toString) => {
-    return class {
-        constructor(...args) {
-            properties.map((p, i) => this[p] = args[i])
-        }
-        toString() {
-            return toString.apply(this)
-        }
-    }
-}
-
-const ColourShape = classFactory(
-    ['colour', 'shape'],
-    function() {
-        return `I'm a ${this.colour} ${this.shape}`
+const clientFactory = (baseURL = "https://api.github.com/", token = "") => ({
+  repo: (owner, name) => {
+    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+      res => res.json()
+    );
+  }
 });
 
-const colourShape = new ColourShape('red', 'circle')
-console.log(colourShape.toString())
+const client = clientFactory();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
 ---
 
-Javascript Has Several Ways to Make an Object
-_The Enterprise Calibre Builder - 1_
+### _The ES2015 Class_
 
 ```javascript
-class ColourShape {
-    constructor(colour, shape) {
-        this.colour = colour
-        this.shape = shape
+class Client {
+  constructor(baseURL = "https://api.github.com/", token = "") {
+    [this.baseURL, this.token] = [baseURL, token];
+  }
+  repo(owner, name) {
+    const headers = this.token ? { Authorization: `token ${this.token}` } : {};
+    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+      res => res.json()
+    );
+  }
+}
+
+const client = new Client();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
+```
+
+---
+
+### _The ES6 Class Factory_
+
+```javascript
+const clientClassFactory = (properties, repo) => {
+  return class {
+    constructor(...args) {
+      properties.map((p, i) => (this[p] = args[i]));
     }
-    toString() {
-        return `I'm a ${this.colour} ${this.shape}`
+    repo(...args) {
+      return repo.apply(this, args);
     }
+  };
+};
+
+const Client = clientClassFactory(["baseURL", "key"], function(owner, name) {
+  const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+  return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+});
+
+const client = new Client();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
+```
+
+---
+
+
+### _The Enterprise Calibre Builder - 1_
+
+```javascript
+class Client {
+  constructor(baseURL, token) {
+    [this.baseURL, this.token] = [baseURL, token];
+  }
+  repo(owner, name) {
+    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+      res => res.json()
+    );
+  }
 }
 ```
 
 ---
 
-Javascript Has Several Ways to Make an Object
-_The Enterprise Calibre Builder - 2_
+### _The Enterprise Calibre Builder - 2_
 
 ```javascript
-class ColourShapeBuilder {
-    constructor() {}
-    setColour(colour) {
-        this.colour = colour
-        return this;
+class ClientBuilderError extends Error {}
+
+class ClientBuilder {
+  constructor() {}
+  setBaseURL(baseURL) {
+    this.baseURL = baseURL;
+    return this;
+  }
+  setToken(token) {
+    this.token = token;
+  }
+  build() {
+    if (!this.baseURL) {
+      throw new ClientBuilderError("baseURL not set");
     }
-    setShape(shape) {
-        this.shape = shape
-        return this;
+    if (!this.token) {
+      throw new ClientBuilderError("token not set");
     }
-    build() {
-        if(!this.colour) { 
-            throw new Error('Colour not set')
-        }
-        if(!this.shape) {
-            throw new Error('Shape not set')
-        }
-        return new ColourShape(this.colour, this.shape)
-    }
+    return new Client();
+  }
 }
+```
 
-const colourShape = (new ColourShapeBuilder()).setColour('red').setShape('circle').build()
+---
 
-console.log(colourShape.toString())
+### _The Enterprise Calibre Builder - 3_
+
+```javascript
+const client = new ClientBuilder()
+  .setToken('')
+  .setBaseURL("https://api.github.com/")
+  .build();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
 ---

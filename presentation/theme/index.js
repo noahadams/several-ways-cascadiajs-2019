@@ -8,12 +8,14 @@ const colors = {
   quaternary: "#598234" // Meadow
 };
 
-const theme = createTheme(colors, {
-    primary: "Georgia",
-    secondary: "Helvetica",
-    tertiary: "Monaco",
-    quaternary: "Cinzel Decorative"
-  }, {
+const fonts = {
+  primary: "Nunito Sans",
+  secondary: "Georgia",
+  tertiary: "Monaco",
+  quaternary: "Cinzel Decorative"
+}
+
+const theme = createTheme(colors, fonts, {
     progress: {
       pacmanTop: {
         background: colors.quaternary
@@ -29,31 +31,32 @@ const theme = createTheme(colors, {
       heading: {
         h1: {
           fontSize: '8rem',
-          textTransform: 'uppercase'
+          fontFamily: fonts.quarternary 
+
         },
         h2: {
-          fontSize: '3.5rem',
-          //textTransform: 'uppercase'
+          fontSize: '5rem',
         },
         h3: {
           fontSize: '3rem',
-          textTransform: 'uppercase'
+          fontFamily: fonts.secondary,
+          color: '#FFFFFF'
         },
         h4: {
           fontSize: '2.5rem',
-          textTransform: 'uppercase'
         },
         h5: {
           fontSize: '2rem',
-          textTransform: 'uppercase'
         },
         h6: {
           fontSize: '1.5rem',
-          textTransform: 'uppercase'
         }
       },
       codePane: {
-        fontSize: '1.5rem'
+        fontSize: '1.25rem'
+      },
+      link: {
+        color: "#AEBD38" // Moss
       }
     }
   });

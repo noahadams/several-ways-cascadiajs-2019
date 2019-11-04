@@ -115,12 +115,15 @@ alert(JSON.stringify(await client.repo("tc39", "proposals")));
 
 const clientFactory = (baseURL = "https://api.github.com/", token = "") => ({
   repo: (owner, name) => {
-    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
-    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+    const headers = token ? { Authorization: `token ${token}` } : {};
+    return fetch(`${baseURL}repos/${owner}/${name}`, { headers }).then(
       res => res.json()
     );
   }
 });
+
+const client = clientFactory();
+alert(JSON.stringify(await client.repo("tc39", "proposals")));
 
 // _The ES2015 Class_
 
@@ -129,7 +132,7 @@ class Client {
     [this.baseURL, this.token] = [baseURL, token];
   }
   repo(owner, name) {
-    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
+    const headers = this.token ? { Authorization: `token ${this.token}` } : {};
     return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
       res => res.json()
     );
@@ -199,7 +202,7 @@ class ClientBuilder {
 
 const client = new ClientBuilder()
   .setBaseURL("https://api.github.com/")
-  .setToken()
+  .setToken('')
   .build();
 alert(JSON.stringify(await client.repo("tc39", "proposals")));
 
