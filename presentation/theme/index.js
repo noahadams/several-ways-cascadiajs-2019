@@ -31,7 +31,7 @@ const theme = createTheme(colors, fonts, {
       heading: {
         h1: {
           fontSize: '8rem',
-          fontFamily: fonts.quarternary 
+          fontFamily: fonts.quaternary 
 
         },
         h2: {
