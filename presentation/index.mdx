@@ -23,11 +23,11 @@ export default DarkSlide
 ---
 export default DarkSlide
 
-## *A Warning:*
+## Warning
 
 ---
 
-## There is going to be a lot of code...
+## There will be code
 
 ---
 
@@ -35,17 +35,18 @@ export default DarkSlide
 
 ---
 
-## It will range from perfectly fine... 
+## Some of it will be fine 
 
 ---
 export default DarkSlide
 
 
-## to _quite unreasonable._
+## Some of it will be
+## _quite unreasonable._
 
 ---
 
-# _The Several Ways_
+# The Several Ways
 
 ---
 
@@ -201,8 +202,8 @@ alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```javascript
 const clientFactory = (baseURL = "https://api.github.com/", token = "") => ({
   repo: (owner, name) => {
-    const headers = this.token ? { Authorization: "token ${this.token}" } : {};
-    return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
+    const headers = token ? { Authorization: "token ${token}" } : {};
+    return fetch(`${baseURL}repos/${owner}/${name}`, { headers }).then(
       res => res.json()
     );
   }
@@ -235,7 +236,7 @@ alert(JSON.stringify(await client.repo("tc39", "proposals")));
 
 ---
 
-### _The ES6 Class Factory_
+### _The ES2015 Class Factory_
 
 ```javascript
 const clientClassFactory = (properties, repo) => {
@@ -256,7 +257,7 @@ const Client = clientClassFactory(["baseURL", "key"], function(owner, name) {
   );
 });
 
-const client = new Client();
+const client = new Client("https://api.github.com/", "");
 alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
@@ -321,35 +322,60 @@ alert(JSON.stringify(await client.repo("tc39", "proposals")));
 
 ---
 
-# So that's 11 ways to do a fundamentally similar but subtly different version of the same thing
+## So that's 11 ways to do the same thing
 
 ---
 
-## But, we were just making a function with a single method...
+## But wait!
 
 ---
-Why not skip the object?
-_The Function Factory_
+## That whole time...
+
+---
+
+## we were just making an object with a single method
+
+---
+
+# 🤔
+
+---
+
+## _Why not skip the object?_
+
+---
+
+### _The Function Factory_
 
 ```javascript
-const ColourShape = (colour, shape) => () => `I'm a ${colour} ${shape}`
+const clientFactory = (baseURL = "https://api.github.com/", token = "") => (
+  owner,
+  name
+) => {
+  const headers = token ? { Authorization: `token ${token}` } : {};
+  return fetch(`${baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+};
 
-const colourShape = ColourShape('red', 'circle')
-
-console.log(colourShape())
+const client = clientFactory();
+alert(JSON.stringify(await client("tc39", "proposals")));
 ```
 
 ---
 
-Or
-_`Function.bind()`_
+### _`Function.prototype.bind()`_
 
 ```javascript
-const colourShapeStringMaker = (colour, shape) => `I'm a ${colour} ${shape}`
+const repos = (baseURL, token, owner, name) => {
+  const headers = token ? { Authorization: `token ${token}` } : {};
+  return fetch(`${baseURL}repos/${owner}/${name}`, { headers }).then(res =>
+    res.json()
+  );
+};
 
-const colourShape = colourShapeStringMaker.bind(null, 'red', 'circle')
-
-console.log(colourShape())
+const myrepos = repos.bind("https://api.github.com/", "");
+alert(JSON.stringify(await myrepos("tc39", "proposals")));
 ```
 
 ---
@@ -358,10 +384,12 @@ console.log(colourShape())
 
 ---
 
-## Javascript Has Several Ways to Make an Object
+## JavaScript has several ways to make an object
 
 ---
 
-## There's an interesting parallel between creating objects, closures, and binding parameters to functions before they are called
+## There is a parallel between creating objects and closures, and binding parameters to functions before they are called
 
 ---
+
+# Thanks

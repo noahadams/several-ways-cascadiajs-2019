@@ -207,7 +207,8 @@ const client = new ClientBuilder()
 alert(JSON.stringify(await client.repo("tc39", "proposals")));
 
 // _The Function Factory_
-const Client = (baseURL = "https://api.github.com/", token = "") => (
+
+const clientFactory = (baseURL = "https://api.github.com/", token = "") => (
   owner,
   name
 ) => {
@@ -216,6 +217,9 @@ const Client = (baseURL = "https://api.github.com/", token = "") => (
     res.json()
   );
 };
+
+const client = clientFactory();
+alert(JSON.stringify(await client("tc39", "proposals")));
 
 // _`Function.bind()`_
 
@@ -226,6 +230,5 @@ const repos = (baseURL, token, owner, name) => {
   );
 };
 
-const myrepos = repos.bind("https://api.github.com/", "");
-
+const myrepos = repos.bind(null, "https://api.github.com/", "");
 alert(JSON.stringify(await myrepos("tc39", "proposals")));
