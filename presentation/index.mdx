@@ -135,15 +135,15 @@ alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ### _The `JSON.parse()` and merge_
 
 ```javascript
-const Client = Object.assign(
+const client = Object.assign(
   {},
   JSON.parse(
-    '{"baseURL":"https://api.github.com/", "token": "arealgithubtoken"}'
+    '{"baseURL":"https://api.github.com/", "token": ""}'
   ),
   {
     repo: function(owner, name) {
       const headers = this.token
-        ? { Authorization: "token ${this.token}" }
+        ? { Authorization: `token ${this.token}` }
         : {};
       return fetch(`${this.baseURL}repos/${owner}/${name}`, { headers }).then(
         res => res.json()
@@ -152,7 +152,6 @@ const Client = Object.assign(
   }
 );
 
-const client = new Client();
 alert(JSON.stringify(await client.repo("tc39", "proposals")));
 ```
 
