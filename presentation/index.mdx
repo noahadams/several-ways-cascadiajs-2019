@@ -137,7 +137,7 @@ alert(JSON.stringify(await client.repo("tc39", "proposals")));
 const Client = Object.assign(
   {},
   JSON.parse(
-    '"baseURL":"https://api.github.com/", "token": "arealgithubtoken"}'
+    '{"baseURL":"https://api.github.com/", "token": "arealgithubtoken"}'
   ),
   {
     repo: function(owner, name) {
@@ -374,7 +374,7 @@ const repos = (baseURL, token, owner, name) => {
   );
 };
 
-const myrepos = repos.bind("https://api.github.com/", "");
+const myrepos = repos.bind(null, "https://api.github.com/", "");
 alert(JSON.stringify(await myrepos("tc39", "proposals")));
 ```
 
